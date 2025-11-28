@@ -1,0 +1,38 @@
+# RTL-SDR to Zello Bridge Dependencies
+
+# SDR and Signal Processing
+pyrtlsdr>=0.3.0
+numpy>=1.21.0
+scipy>=1.7.0
+
+# Audio Processing (optional for basic functionality)
+# pyaudio>=0.2.11  # Uncomment if audio routing is needed
+# sounddevice>=0.4.6  # Alternative audio library
+lameenc>=1.4.0  # Pure Python MP3 encoding (no external dependencies, faster than pydub)
+
+# Web Framework and API
+fastapi>=0.100.0
+uvicorn[standard]>=0.20.0
+websockets>=11.0
+jinja2>=3.1.0
+python-multipart>=0.0.6
+
+# Database
+sqlalchemy>=2.0.0
+alembic>=1.12.0
+
+# Configuration and Utilities
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+pyyaml>=6.0
+
+# HTTP Requests
+aiohttp>=3.8.0
+
+# Development Dependencies (optional)
+# pytest>=7.0.0
+# black>=23.0.0
+# flake8>=6.0.0
+
+# System Integration
+psutil>=5.9.0

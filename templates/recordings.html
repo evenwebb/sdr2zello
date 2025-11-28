@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recordings - sdr2zello</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta name="theme-color" content="#1e3c72">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="sdr2zello">
+    <link rel="apple-touch-icon" href="/static/icon-192.png">
+    <link rel="manifest" href="/static/manifest.json">
+</head>
+<body>
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav">
+        <div class="mobile-nav-header">
+            <h1 class="mobile-nav-title">
+                <i class="fas fa-radio"></i>
+                sdr2zello
+            </h1>
+            <button class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div class="mobile-nav-menu" id="mobile-nav-menu">
+            <a href="/" class="mobile-nav-link">
+                <i class="fas fa-home"></i>
+                Dashboard
+            </a>
+            <a href="/frequencies" class="mobile-nav-link">
+                <i class="fas fa-list"></i>
+                Frequencies
+            </a>
+            <a href="/monitor" class="mobile-nav-link">
+                <i class="fas fa-signal"></i>
+                Monitor
+            </a>
+            <a href="/logs" class="mobile-nav-link">
+                <i class="fas fa-history"></i>
+                Logs
+            </a>
+            <a href="/recordings" class="mobile-nav-link active">
+                <i class="fas fa-microphone"></i>
+                Recordings
+            </a>
+            <button class="mobile-nav-link" id="mobile-settings-btn">
+                <i class="fas fa-cog"></i>
+                Settings
+            </button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-microphone"></i> Recordings</h1>
+            <p>Browse, play, and manage your recorded transmissions</p>
+        </header>
+
+        <!-- Status Controls Line -->
+        <div class="status-controls-line">
+            <div class="status-control-card">
+                <div class="status-control-icon">
+                    <i class="fas fa-power-off"></i>
+                </div>
+                <div class="status-control-content">
+                    <div class="status-control-label">Scanner</div>
+                    <div class="status-control-status">
+                        <span id="scanner-status" class="status stopped">STOPPED</span>
+                    </div>
+                    <div class="status-control-action">
+                        <button id="scanner-toggle" class="btn btn-primary btn-touch">
+                            <span class="btn-text">Start</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="status-control-card">
+                <div class="status-control-icon">
+                    <i class="fas fa-volume-up"></i>
+                </div>
+                <div class="status-control-content">
+                    <div class="status-control-label">Audio</div>
+                    <div class="status-control-status">
+                        <span id="audio-status" class="status enabled">ENABLED</span>
+                    </div>
+                    <div class="status-control-action">
+                        <button id="audio-toggle" class="btn btn-secondary btn-touch">
+                            <span class="btn-text">Disable</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="status-control-card">
+                <div class="status-control-icon">
+                    <i class="fas fa-satellite-dish"></i>
+                </div>
+                <div class="status-control-content">
+                    <div class="status-control-label">SDR Device</div>
+                    <div class="status-control-status">
+                        <span id="sdr-status" class="status">DISCONNECTED</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Bar -->
+        <nav class="navigation-bar">
+            <a href="/" class="btn btn-info btn-touch">
+                <i class="fas fa-home"></i>
+                <span class="btn-text">Dashboard</span>
+            </a>
+            <a href="/frequencies" class="btn btn-info btn-touch">
+                <i class="fas fa-list"></i>
+                <span class="btn-text">Frequencies</span>
+            </a>
+            <a href="/monitor" class="btn btn-info btn-touch">
+                <i class="fas fa-signal"></i>
+                <span class="btn-text">Monitor</span>
+            </a>
+            <a href="/logs" class="btn btn-info btn-touch">
+                <i class="fas fa-history"></i>
+                <span class="btn-text">Logs</span>
+            </a>
+            <a href="/recordings" class="btn btn-info btn-touch">
+                <i class="fas fa-microphone"></i>
+                <span class="btn-text">Recordings</span>
+            </a>
+            <button id="settings-btn" class="btn btn-info btn-touch">
+                <i class="fas fa-cog"></i>
+                <span class="btn-text">Settings</span>
+            </button>
+        </nav>
+
+        <!-- Statistics Overview -->
+        <section class="panel stats-overview">
+            <div class="section-header">
+                <h2><i class="fas fa-chart-line"></i> Recording Statistics</h2>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fas fa-microphone"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="stat-total">-</div>
+                        <div class="stat-label">Total Recordings</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="stat-duration">-</div>
+                        <div class="stat-label">Total Duration (hrs)</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fas fa-hdd"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="stat-size">-</div>
+                        <div class="stat-label">Total Size (GB)</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="stat-favorites">-</div>
+                        <div class="stat-label">Favorites</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search and Filters -->
+        <section class="panel content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-search"></i> Search & Filters</h2>
+            </div>
+            <div class="search-filters">
+                <input type="text" id="search-input" class="form-control" placeholder="Search recordings (filename, description, frequency, tags...)">
+                <select id="format-filter" class="form-control">
+                    <option value="">All Formats</option>
+                    <option value="WAV">WAV</option>
+                    <option value="MP3">MP3</option>
+                </select>
+                <select id="favorite-filter" class="form-control">
+                    <option value="">All Recordings</option>
+                    <option value="true">Favorites Only</option>
+                    <option value="false">Non-Favorites Only</option>
+                </select>
+                <select id="group-filter" class="form-control">
+                    <option value="">All Groups</option>
+                </select>
+                <input type="date" id="date-from-filter" class="form-control" placeholder="From Date" title="Filter from date">
+                <input type="date" id="date-to-filter" class="form-control" placeholder="To Date" title="Filter to date">
+                <select id="sort-filter" class="form-control">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="duration-long">Duration: Long to Short</option>
+                    <option value="duration-short">Duration: Short to Long</option>
+                    <option value="size-large">Size: Large to Small</option>
+                    <option value="size-small">Size: Small to Large</option>
+                    <option value="signal-strong">Signal: Strong to Weak</option>
+                    <option value="signal-weak">Signal: Weak to Strong</option>
+                </select>
+                <button id="clear-filters" class="btn btn-secondary btn-touch">
+                    <i class="fas fa-times"></i>
+                    <span class="btn-text">Clear</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Recordings List -->
+        <section class="panel content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-list"></i> Recordings</h2>
+                <div class="recordings-header-actions">
+                    <button id="select-all-recordings" class="btn btn-secondary btn-small btn-touch">
+                        <i class="fas fa-check-square"></i>
+                        <span class="btn-text">Select All</span>
+                    </button>
+                    <button id="bulk-favorite" class="btn btn-warning btn-small btn-touch" disabled>
+                        <i class="fas fa-star"></i>
+                        <span class="btn-text">Favorite</span>
+                    </button>
+                    <button id="bulk-delete" class="btn btn-danger btn-small btn-touch" disabled>
+                        <i class="fas fa-trash"></i>
+                        <span class="btn-text">Delete</span>
+                    </button>
+                    <button id="export-recordings" class="btn btn-info btn-small btn-touch">
+                        <i class="fas fa-download"></i>
+                        <span class="btn-text">Export</span>
+                    </button>
+                </div>
+            </div>
+            <div id="recordings-content" class="recordings-content">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <div>Loading recordings...</div>
+                </div>
+            </div>
+            <div class="pagination" id="pagination"></div>
+        </section>
+    </div>
+
+    <!-- Audio Player Container -->
+    <div class="audio-player-container" id="audio-player-container">
+        <div class="player-info">
+            <strong id="player-filename"></strong>
+            <span id="player-details"></span>
+        </div>
+        <div class="player-controls">
+            <audio id="audio-player" controls></audio>
+            <div class="player-extra-controls">
+                <label for="playback-speed" class="playback-speed-label">Speed:</label>
+                <select id="playback-speed" class="playback-speed-select" onchange="setPlaybackSpeed(this.value)">
+                    <option value="0.5">0.5x</option>
+                    <option value="0.75">0.75x</option>
+                    <option value="1" selected>1x</option>
+                    <option value="1.25">1.25x</option>
+                    <option value="1.5">1.5x</option>
+                    <option value="2">2x</option>
+                </select>
+            </div>
+            <button class="btn btn-secondary btn-touch" onclick="closePlayer()">
+                <i class="fas fa-times"></i>
+                <span class="btn-text">Close</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-cog"></i> sdr2zello Settings</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="settings-tabs">
+                    <div class="tab-buttons">
+                        <button class="tab-btn active" data-tab="sdr-settings">SDR Settings</button>
+                        <button class="tab-btn" data-tab="audio-settings">Audio Settings</button>
+                        <button class="tab-btn" data-tab="dsp-settings">Audio Processing</button>
+                        <button class="tab-btn" data-tab="scanning-settings">Scanning Settings</button>
+                        <button class="tab-btn" data-tab="system-settings">System Settings</button>
+                    </div>
+                    <div id="sdr-settings" class="tab-content active">
+                        <h4><i class="fas fa-radio"></i> RTL-SDR Configuration</h4>
+                        <div class="form-group">
+                            <label for="sdr-device-index">Device Index:</label>
+                            <input type="number" id="sdr-device-index" min="0" max="10" value="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('settings-modal')">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/recordings.js"></script>
+</body>
+</html>

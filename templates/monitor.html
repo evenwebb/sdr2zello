@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor - sdr2zello</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta name="theme-color" content="#1e3c72">
+</head>
+<body>
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav">
+        <div class="mobile-nav-header">
+            <h1 class="mobile-nav-title">
+                <i class="fas fa-radio"></i>
+                sdr2zello
+            </h1>
+            <button class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div class="mobile-nav-menu" id="mobile-nav-menu">
+            <a href="/" class="mobile-nav-link">
+                <i class="fas fa-home"></i>
+                Dashboard
+            </a>
+            <a href="/frequencies" class="mobile-nav-link">
+                <i class="fas fa-list"></i>
+                Frequencies
+            </a>
+            <a href="/monitor" class="mobile-nav-link active">
+                <i class="fas fa-signal"></i>
+                Monitor
+            </a>
+            <a href="/logs" class="mobile-nav-link">
+                <i class="fas fa-history"></i>
+                Logs
+            </a>
+            <a href="/recordings" class="mobile-nav-link">
+                <i class="fas fa-microphone"></i>
+                Recordings
+            </a>
+            <button class="mobile-nav-link" id="mobile-settings-btn">
+                <i class="fas fa-cog"></i>
+                Settings
+            </button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-signal"></i> Real-time Monitor</h1>
+            <p>Live signal strength monitoring and transmission alerts</p>
+        </header>
+
+        <!-- Status Controls Line -->
+        <div class="status-controls-line">
+            <div class="status-control-card">
+                <div class="status-control-icon">
+                    <i class="fas fa-power-off"></i>
+                </div>
+                <div class="status-control-content">
+                    <div class="status-control-label">Scanner</div>
+                    <div class="status-control-status">
+                        <span id="scanner-status" class="status stopped">STOPPED</span>
+                    </div>
+                    <div class="status-control-action">
+                        <button id="scanner-toggle" class="btn btn-primary btn-touch">
+                            <span class="btn-text">Start</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="status-control-card">
+                <div class="status-control-icon">
+                    <i class="fas fa-volume-up"></i>
+                </div>
+                <div class="status-control-content">
+                    <div class="status-control-label">Audio</div>
+                    <div class="status-control-status">
+                        <span id="audio-status" class="status enabled">ENABLED</span>
+                    </div>
+                    <div class="status-control-action">
+                        <button id="audio-toggle" class="btn btn-secondary btn-touch">
+                            <span class="btn-text">Disable</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="status-control-card">
+                <div class="status-control-icon">
+                    <i class="fas fa-satellite-dish"></i>
+                </div>
+                <div class="status-control-content">
+                    <div class="status-control-label">SDR Device</div>
+                    <div class="status-control-status">
+                        <span id="sdr-status" class="status">DISCONNECTED</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Bar -->
+        <nav class="navigation-bar">
+            <a href="/" class="btn btn-info btn-touch">
+                <i class="fas fa-home"></i>
+                <span class="btn-text">Dashboard</span>
+            </a>
+            <a href="/frequencies" class="btn btn-info btn-touch">
+                <i class="fas fa-list"></i>
+                <span class="btn-text">Frequencies</span>
+            </a>
+            <a href="/monitor" class="btn btn-info btn-touch">
+                <i class="fas fa-signal"></i>
+                <span class="btn-text">Monitor</span>
+            </a>
+            <a href="/logs" class="btn btn-info btn-touch">
+                <i class="fas fa-history"></i>
+                <span class="btn-text">Logs</span>
+            </a>
+            <a href="/recordings" class="btn btn-info btn-touch">
+                <i class="fas fa-microphone"></i>
+                <span class="btn-text">Recordings</span>
+            </a>
+            <button id="settings-btn" class="btn btn-info btn-touch">
+                <i class="fas fa-cog"></i>
+                <span class="btn-text">Settings</span>
+            </button>
+        </nav>
+
+        <!-- Real-time Monitor Panel -->
+        <section class="panel content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-signal"></i> Signal Monitor</h2>
+                <div class="monitor-controls">
+                    <button id="clear-signal-data" class="btn btn-secondary btn-small">
+                        <i class="fas fa-redo"></i>
+                        <span class="btn-text">Clear</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Current Signal Info -->
+            <div class="signal-info-grid">
+                <div class="signal-info-card">
+                    <div class="signal-info-icon">
+                        <i class="fas fa-waveform-lines"></i>
+                    </div>
+                    <div class="signal-info-content">
+                        <div class="signal-info-label">Current Signal</div>
+                        <div class="signal-info-value" id="current-signal">--- dBm</div>
+                    </div>
+                </div>
+                <div class="signal-info-card">
+                    <div class="signal-info-icon">
+                        <i class="fas fa-arrow-up"></i>
+                    </div>
+                    <div class="signal-info-content">
+                        <div class="signal-info-label">Peak Signal</div>
+                        <div class="signal-info-value" id="peak-signal">--- dBm</div>
+                    </div>
+                </div>
+                <div class="signal-info-card">
+                    <div class="signal-info-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="signal-info-content">
+                        <div class="signal-info-label">Average Signal</div>
+                        <div class="signal-info-value" id="avg-signal">--- dBm</div>
+                    </div>
+                </div>
+                <div class="signal-info-card">
+                    <div class="signal-info-icon">
+                        <i class="fas fa-radio"></i>
+                    </div>
+                    <div class="signal-info-content">
+                        <div class="signal-info-label">Current Frequency</div>
+                        <div class="signal-info-value" id="monitor-current-frequency">---</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Signal Monitor Canvas -->
+            <div id="signal-monitor" class="signal-monitor">
+                <canvas id="signal-canvas"></canvas>
+                <div class="signal-monitor-overlay">
+                    <div class="signal-threshold-line" id="squelch-line"></div>
+                </div>
+            </div>
+
+            <!-- Transmission Alert -->
+            <div id="transmission-alert" class="transmission-alert hidden">
+                <div class="alert-content">
+                    <div class="alert-icon">
+                        <i class="fas fa-broadcast-tower"></i>
+                    </div>
+                    <div class="alert-text">
+                        <strong>TRANSMISSION DETECTED</strong>
+                        <div class="alert-details">
+                            <div id="alert-frequency" class="alert-frequency"></div>
+                            <div id="alert-signal-strength" class="alert-signal"></div>
+                        </div>
+                    </div>
+                    <button class="alert-close" onclick="app.dismissAlert()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Active Frequencies List -->
+            <div class="active-frequencies-panel">
+                <div class="section-header">
+                    <h3><i class="fas fa-list"></i> Active Frequencies</h3>
+                </div>
+                <div id="active-frequencies-list" class="active-frequencies-list">
+                    <div class="no-active-frequencies">
+                        <i class="fas fa-info-circle"></i>
+                        <p>No active frequencies detected</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-cog"></i> sdr2zello Settings</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="settings-tabs">
+                    <div class="tab-buttons">
+                        <button class="tab-btn active" data-tab="sdr-settings">SDR Settings</button>
+                        <button class="tab-btn" data-tab="audio-settings">Audio Settings</button>
+                        <button class="tab-btn" data-tab="scanning-settings">Scanning Settings</button>
+                    </div>
+                    <div id="sdr-settings" class="tab-content active">
+                        <h4><i class="fas fa-radio"></i> RTL-SDR Configuration</h4>
+                        <div class="form-group">
+                            <label for="sdr-device-index">Device Index:</label>
+                            <input type="number" id="sdr-device-index" min="0" max="10" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="sdr-sample-rate">Sample Rate (Hz):</label>
+                            <select id="sdr-sample-rate">
+                                <option value="2048000" selected>2.048 MHz</option>
+                                <option value="2400000">2.4 MHz</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="sdr-gain">Gain (dB):</label>
+                            <input type="range" id="sdr-gain" min="0" max="50" value="49.6" step="0.1">
+                            <output id="sdr-gain-value">49.6</output>
+                        </div>
+                    </div>
+                    <!-- Other tabs -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('settings-modal')">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
+

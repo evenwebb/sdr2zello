@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transmission Logs - sdr2zello</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta name="theme-color" content="#1e3c72">
+</head>
+<body>
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav">
+        <div class="mobile-nav-header">
+            <h1 class="mobile-nav-title">
+                <i class="fas fa-radio"></i>
+                sdr2zello
+            </h1>
+            <button class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div class="mobile-nav-menu" id="mobile-nav-menu">
+            <a href="/" class="mobile-nav-link">
+                <i class="fas fa-home"></i>
+                Dashboard
+            </a>
+            <a href="/frequencies" class="mobile-nav-link">
+                <i class="fas fa-list"></i>
+                Frequencies
+            </a>
+            <a href="/monitor" class="mobile-nav-link">
+                <i class="fas fa-signal"></i>
+                Monitor
+            </a>
+            <a href="/logs" class="mobile-nav-link active">
+                <i class="fas fa-history"></i>
+                Logs
+            </a>
+            <a href="/recordings" class="mobile-nav-link">
+                <i class="fas fa-microphone"></i>
+                Recordings
+            </a>
+            <button class="mobile-nav-link" id="mobile-settings-btn">
+                <i class="fas fa-cog"></i>
+                Settings
+            </button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-history"></i> Transmission Logs</h1>
+            <p>View and manage transmission history</p>
+        </header>
+
+        <!-- Status Controls Line -->
+        <div class="status-controls-line">
+            <div class="status-control-card">
+                <div class="status-control-icon">
+                    <i class="fas fa-power-off"></i>
+                </div>
+                <div class="status-control-content">
+                    <div class="status-control-label">Scanner</div>
+                    <div class="status-control-status">
+                        <span id="scanner-status" class="status stopped">STOPPED</span>
+                    </div>
+                    <div class="status-control-action">
+                        <button id="scanner-toggle" class="btn btn-primary btn-touch">
+                            <span class="btn-text">Start</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="status-control-card">
+                <div class="status-control-icon">
+                    <i class="fas fa-volume-up"></i>
+                </div>
+                <div class="status-control-content">
+                    <div class="status-control-label">Audio</div>
+                    <div class="status-control-status">
+                        <span id="audio-status" class="status enabled">ENABLED</span>
+                    </div>
+                    <div class="status-control-action">
+                        <button id="audio-toggle" class="btn btn-secondary btn-touch">
+                            <span class="btn-text">Disable</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="status-control-card">
+                <div class="status-control-icon">
+                    <i class="fas fa-satellite-dish"></i>
+                </div>
+                <div class="status-control-content">
+                    <div class="status-control-label">SDR Device</div>
+                    <div class="status-control-status">
+                        <span id="sdr-status" class="status">DISCONNECTED</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Bar -->
+        <nav class="navigation-bar">
+            <a href="/" class="btn btn-info btn-touch">
+                <i class="fas fa-home"></i>
+                <span class="btn-text">Dashboard</span>
+            </a>
+            <a href="/frequencies" class="btn btn-info btn-touch">
+                <i class="fas fa-list"></i>
+                <span class="btn-text">Frequencies</span>
+            </a>
+            <a href="/monitor" class="btn btn-info btn-touch">
+                <i class="fas fa-signal"></i>
+                <span class="btn-text">Monitor</span>
+            </a>
+            <a href="/logs" class="btn btn-info btn-touch">
+                <i class="fas fa-history"></i>
+                <span class="btn-text">Logs</span>
+            </a>
+            <a href="/recordings" class="btn btn-info btn-touch">
+                <i class="fas fa-microphone"></i>
+                <span class="btn-text">Recordings</span>
+            </a>
+            <button id="settings-btn" class="btn btn-info btn-touch">
+                <i class="fas fa-cog"></i>
+                <span class="btn-text">Settings</span>
+            </button>
+        </nav>
+
+        <!-- Log Statistics -->
+        <section class="panel log-stats">
+            <div class="log-stats-grid">
+                <div class="log-stat-card">
+                    <div class="log-stat-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div class="log-stat-content">
+                        <div class="log-stat-value" id="log-total-count">0</div>
+                        <div class="log-stat-label">Total Logs</div>
+                    </div>
+                </div>
+                <div class="log-stat-card">
+                    <div class="log-stat-icon">
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                    <div class="log-stat-content">
+                        <div class="log-stat-value" id="log-today-count">0</div>
+                        <div class="log-stat-label">Today</div>
+                    </div>
+                </div>
+                <div class="log-stat-card">
+                    <div class="log-stat-icon">
+                        <i class="fas fa-signal"></i>
+                    </div>
+                    <div class="log-stat-content">
+                        <div class="log-stat-value" id="log-avg-signal">---</div>
+                        <div class="log-stat-label">Avg Signal</div>
+                    </div>
+                </div>
+                <div class="log-stat-card">
+                    <div class="log-stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="log-stat-content">
+                        <div class="log-stat-value" id="log-total-duration">0h</div>
+                        <div class="log-stat-label">Total Duration</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Transmission Log Panel -->
+        <section class="panel content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-history"></i> Transmission Log</h2>
+            </div>
+            <div class="log-controls">
+                <div class="log-filters">
+                    <select id="log-filter" class="form-control">
+                        <option value="">All Frequencies</option>
+                    </select>
+                    <select id="log-sort" class="form-control">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="signal-high">Signal: High to Low</option>
+                        <option value="signal-low">Signal: Low to High</option>
+                        <option value="duration-long">Duration: Long to Short</option>
+                        <option value="duration-short">Duration: Short to Long</option>
+                    </select>
+                    <input type="date" id="log-date-filter" class="form-control" title="Filter by date">
+                </div>
+                <div class="log-actions">
+                    <button id="export-logs" class="btn btn-info btn-touch">
+                        <i class="fas fa-download"></i>
+                        <span class="btn-text">Export</span>
+                    </button>
+                    <button id="clear-logs" class="btn btn-warning btn-touch">
+                        <i class="fas fa-trash"></i>
+                        <span class="btn-text">Clear</span>
+                    </button>
+                </div>
+            </div>
+            <div class="log-pagination">
+                <button id="log-prev" class="btn btn-secondary btn-small" disabled>
+                    <i class="fas fa-chevron-left"></i>
+                    <span class="btn-text">Previous</span>
+                </button>
+                <span class="log-page-info">
+                    Page <span id="log-current-page">1</span> of <span id="log-total-pages">1</span>
+                    (<span id="log-showing-count">0</span> entries)
+                </span>
+                <button id="log-next" class="btn btn-secondary btn-small" disabled>
+                    <span class="btn-text">Next</span>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <div id="transmission-log" class="transmission-log"></div>
+        </section>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-cog"></i> sdr2zello Settings</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="settings-tabs">
+                    <div class="tab-buttons">
+                        <button class="tab-btn active" data-tab="sdr-settings">SDR Settings</button>
+                        <button class="tab-btn" data-tab="scanning-settings">Scanning Settings</button>
+                    </div>
+                    <div id="sdr-settings" class="tab-content active">
+                        <h4><i class="fas fa-radio"></i> RTL-SDR Configuration</h4>
+                        <div class="form-group">
+                            <label for="sdr-device-index">Device Index:</label>
+                            <input type="number" id="sdr-device-index" min="0" max="10" value="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('settings-modal')">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
+

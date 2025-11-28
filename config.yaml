@@ -1,0 +1,98 @@
+# sdr2zello Configuration File
+# Edit this file to customize your installation
+
+# Server Configuration
+server:
+  host: "localhost"          # Server host (0.0.0.0 for external access)
+  port: 8000                 # Web interface port
+  debug: false               # Enable debug mode
+  log_level: "INFO"          # Logging level: DEBUG, INFO, WARNING, ERROR
+
+# RTL-SDR Configuration
+sdr:
+  device_index: 0            # RTL-SDR device index
+  sample_rate: 2048000        # Sample rate in Hz (2.048 MHz)
+  gain: 49.6                 # Gain in dB (or 'auto' for automatic gain)
+
+# Audio Configuration
+audio:
+  sample_rate: 48000         # Audio sample rate
+  channels: 1                # Audio channels (1 = mono)
+  chunk_size: 1024           # Audio chunk size
+  device_name: ""            # Audio device name (empty = default device)
+
+# Scanning Configuration
+scanning:
+  delay: 0.1                 # Delay between frequency changes (seconds)
+  squelch_threshold: -50.0   # Signal threshold in dBm
+  transmission_timeout: 5.0  # Seconds to wait for transmission end
+
+# Priority Scanning Configuration
+priority_scanning:
+  enabled: true              # Enable priority-based scanning
+  multiplier: 2.0            # Priority weight multiplier (1.0-10.0)
+  min_priority_weight: 0.5   # Minimum weight for low priority frequencies
+  scan_mode: "weighted"      # "weighted" or "round_robin"
+
+# Audio Recording
+recording:
+  directory: "recordings"    # Directory for audio recordings
+  format: "wav"             # Recording format: "wav" or "mp3" (mp3 requires lameenc)
+  mp3_bitrate: "192k"       # MP3 bitrate (if format is mp3): "128k", "192k", "256k", "320k"
+
+# DSP Configuration (Audio Processing)
+dsp:
+  # Noise Gate Settings
+  noise_gate:
+    enabled: true
+    threshold: -40.0         # Noise gate threshold in dB
+    attack_time: 0.001       # Attack time in seconds
+    release_time: 0.1        # Release time in seconds
+  
+  # Automatic Gain Control (AGC) Settings
+  agc:
+    enabled: true
+    target_level: -20.0      # Target output level in dB
+    attack_time: 0.003       # AGC attack time in seconds
+    release_time: 0.1        # AGC release time in seconds
+    max_gain: 40.0           # Maximum gain in dB
+  
+  # Noise Reduction Settings
+  noise_reduction:
+    enabled: false           # Enable noise reduction (CPU intensive)
+    alpha: 2.0               # Over-subtraction factor (1.0-3.0)
+    frame_size: 1024         # Frame size for spectral processing
+  
+  # Equalizer Settings
+  equalizer:
+    enabled: false           # Enable audio equalizer
+    sub_bass_gain: 0.0       # 60Hz high-pass filter
+    bass_gain: 0.0           # 200Hz gain
+    low_mid_gain: 0.0        # 500Hz gain
+    mid_gain: 0.0            # 1kHz gain
+    high_mid_gain: 0.0       # 2kHz gain
+    presence_gain: 0.0       # 4kHz gain
+    brilliance_gain: 0.0     # 8kHz gain
+    air_gain: 0.0            # 12kHz low-pass filter
+
+# Database Configuration
+database:
+  url: "sqlite:///sdr2zello.db"
+
+# Default Frequencies (in Hz)
+# These are loaded when the database is first initialized
+default_frequencies:
+  - 118000000    # Aviation - Tower frequency (AM)
+  - 121500000    # Aviation - Emergency frequency (AM)
+  - 122800000    # Aviation - Unicom (AM)
+  - 145500000    # Amateur Radio - 2m repeater (FM)
+  - 446000000    # Amateur Radio - 70cm repeater (FM)
+  - 155160000    # Marine VHF (FM)
+  - 162550000    # Weather radio (FM)
+
+# Web Interface Paths
+paths:
+  static_files: "static"
+  templates: "templates"
+  recordings: "recordings"
+

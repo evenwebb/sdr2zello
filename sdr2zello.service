@@ -1,0 +1,43 @@
+[Unit]
+Description=sdr2zello - RTL-SDR to Zello Bridge Service
+Documentation=https://github.com/your-repo/sdr2zello
+After=network.target pulseaudio.service
+Wants=network.target
+
+[Service]
+Type=simple
+User=sdr2zello
+Group=sdr2zello
+WorkingDirectory=/opt/sdr2zello
+Environment=PATH=/opt/sdr2zello/venv/bin
+Environment=PYTHONPATH=/opt/sdr2zello
+ExecStart=/opt/sdr2zello/venv/bin/python main.py
+ExecReload=/bin/kill -HUP $MAINPID
+
+# Security settings
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/sdr2zello/recordings /opt/sdr2zello/logs
+PrivateTmp=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+
+# Resource limits
+MemoryLimit=512M
+CPUQuota=50%
+
+# Restart policy
+Restart=always
+RestartSec=10
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=sdr2zello
+
+[Install]
+WantedBy=multi-user.target
